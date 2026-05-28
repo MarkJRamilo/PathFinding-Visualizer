@@ -46,7 +46,7 @@ jobs:
       - name: Publish app
         run: dotnet publish PathFinding-Visualizer -c Release
       - name: Rewrite base href
-        uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec # v1.1.0
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862 # v1.1.0
         with:
           html_path: ${{ env.PUBLISH_DIR }}/index.html
           base_href: /PathFinding-Visualizer/
