@@ -41,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'PathFinding_Visualizer/PathFind_Visualizer_Published/wwwroot'
+          path: 'PathFinding-Visualizer/PathFind_Visualizer_Published/wwwroot'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
