@@ -1,0 +1,12 @@
+D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Collections.dll
+D885BCE0-285E-4FE9-8F09-A5F8E36014A6
+6000001
+6000002
+6000004
+6000005
+6000006
+6000007
+6000008
+6000009
+600000a
+600000b

@@ -1,0 +1,9 @@
+D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\Microsoft.Extensions.Options.dll
+3C8CEA7D-93B9-470C-B16D-8B0F447AAEFB
+6000001
+6000012
+600003f
+6000040
+6000041
+6000046
+6000047

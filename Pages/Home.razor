@@ -1,0 +1,879 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations.Schema
+@using System.Runtime.CompilerServices
+@using System.Drawing
+@using System.Text
+
+@inject IJSRuntime JS
+
+<PageTitle>Home</PageTitle>
+
+<!-- from fonts google -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+@code {
+    
+    //Setup for grids and individual nodes
+    PathFindingAlgorithms? pathfindingAlgorithm;
+    MazeGenerationAlgorithms? generateMaze;
+    Node? tempNodeForMouseEventInterlop = new Node();
+    DotNetObjectReference<Home>? DotNetMethodReferenceForJS;
+    public Node[,]? grid;
+    int nodeSize;
+    int numberGridRows = 61;
+    int numberofGridColumns = 25; 
+    int alotedSpaceForHeader;
+    int gridWidthRemainder; // remainder from (width space/ nodsize)
+    int endnodeCount; // limited to 3
+    double  transitionDelay = 0.5;
+    int pathfindingAlgorithmSpeed = 1;
+    string pathfindingSpeedMode = "Normal";
+
+
+    //bools for search algorithms interactions
+    bool razorIntializeDone = false;
+    bool isAlgorithmalreadyInProgress = false;
+    bool isAlgorithmalreadyPaused = false;
+    bool pathfindingAlgoFinished = true; //default to true to avoid running algo when moving special nodes
+
+    //For buttons
+    bool showMazeSelection = false;
+    bool showSearchAlgorithmSelection = false;
+    string currentlyActiveSearchAlgorithm = "Breadth-First"; //watching out for Bidirectional (remove extra endnodes until 1 is left)
+
+    //FOR READABLITY ONLY (Buttons looks confusing and hardcoded without this)
+    //Button State Constants
+    const string Disabled = "header-button-disabled";
+    const string Enabled = "header-button-enabled";
+    const string Active = "header-button-active";
+    const string ActiveClickable = "header-button-active-clickable"; //for paintWallButtonState and EndnodeAndWallEraserButtonState
+
+    public enum ButtonType{
+        GenerateMaze,
+        RunSearchAlgorithm,
+        PaintWall,
+        PauseSearch,
+        ResetSearch,
+        ClearWalls,
+        AddEndnode,
+        EndnodeAndWallEraser
+    }
+
+    //ButtonState used to define CSS class (Functional)
+    string generateMazeButtonState = Enabled;
+    string pathFindingAlgorithmsButtonState = Enabled;
+    string runSearchAlgorithmButtonState = Enabled;
+    string paintWallButtonState = Enabled;
+    string cleartWallButtonState = Enabled;
+    string pauseButtonState = Disabled;
+    string resetButtonState = Disabled;
+    string addEndnodeButtonState = Enabled;
+    string EndnodeAndWallEraserButtonState = Enabled;
+    string speedButtonState = Enabled;
+
+    //For Manual Interactions
+    bool manualEnabled = true;
+    int manualCurrentPageNumber = 0;
+  
+
+
+
+    protected override void OnInitialized()
+    {
+        //For JS Interlop using instance method
+        DotNetMethodReferenceForJS = DotNetObjectReference.Create(this);
+
+        grid = new Node[numberGridRows, numberofGridColumns];
+    }
+
+    //INVOKE JAVASCRIPT for mouse event Listeners
+    IJSObjectReference? module;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/Home.razor.js");
+            Console.WriteLine("Entered First Render");
+            await module.InvokeVoidAsync("testIJSConnection", DotNetMethodReferenceForJS);
+
+            //document height and width to assing the correct size and position to nodes
+            nodeSize = await module.InvokeAsync<int>("passViewPortWidthSize") / numberGridRows; //limit column 
+            gridWidthRemainder = await module.InvokeAsync<int>("passViewPortWidthSize") % nodeSize; //IF USING screen.innerwidth (unse top if using document DOM size that is affected by minimize when ran)
+
+           // if(nodeSize % 2 != 0) nodeSize += 1; //bring back remainder lost from / numberGridRows if numberGridRows is odd
+
+            //alotedSpaceForHeader = await module.InvokeAsync<int>("passViewPortHeightSize") - (nodeSize * numberofGridColumns); //alot space for header
+            alotedSpaceForHeader = nodeSize * 5; //IF USING screen.innerheight (unse top if using document DOM size that is affected by minimize when ran)
+
+            //pass needed callback and sizes required to map nodes using index
+            
+            
+
+            //Generate Grid
+            for (int r = 0; r < grid?.GetLength(0); r++)
+            {
+
+                for (int c = 0; c < grid.GetLength(1); c++)
+                {                                //aloted space to make width in middle
+                    grid[r, c] = new Node(r, c ,((gridWidthRemainder/2)+(r * nodeSize)) ,alotedSpaceForHeader +  (c * nodeSize) ); //(Node Row Positon, Node Column Positon) (using /2 if using screen.innnerwidth)
+                }
+
+            }
+
+            pathfindingAlgorithm = new PathFindingAlgorithms(updateDOMState, algorithmCompletesWithoutUserInterupting, grid!);
+            generateMaze = new MazeGenerationAlgorithms(updateDOMState, grid!);
+
+            //set initial starting and end point
+            grid?[20, 10].setAsNewInitialStartPoint();
+            addEndnode();
+            //grid[30, 5].setAsNewEndPoint();
+            //grid[35, 5].setAsNewEndPoint();
+
+            razorIntializeDone = true; //allow home.razor to render grid
+            await InvokeAsync(StateHasChanged);
+
+        }// To follow Dispose Asynch for JAVA Module (if done using)
+
+    }
+
+
+    //For Mouseclick 2
+    [JSInvokable]
+    public async Task<string> MouseDownOnNodeBehavior(int xMousePosition, int yMousePosition)
+    {
+        Node? node = getNodeWithCoordinates(xMousePosition, yMousePosition);//get node Clciks
+        string nodeMouseMoveChangeType = "empty";// [NodeIsStartNode, NodeIsEndNode] (ei. bool[true, false] => startnode / bool[false, true] =>
+        tempNodeForMouseEventInterlop = node; //Global Variable to carry over to MouseMove Method (will swap Node type)
+        if(node == null) return nodeMouseMoveChangeType; //return if their is no valid node on pointers
+
+        if(paintWallButtonState == ActiveClickable
+        && node.InitialStartPoint != true //Drag instead of pain when mousedown on starting point
+        && node.EndPoint != true) //Drag instead of pain when mousedown on endnode
+        {
+            node.setAsWall();
+            StateHasChanged();
+            return "PaintWall"; //trigger one Paintwall and return
+        }
+        else if(EndnodeAndWallEraserButtonState == ActiveClickable
+            && (endnodeCount != 1 || !node.EndPoint) //Drag instead of erase when mousedown on last endnode
+            && node.InitialStartPoint != true) //Drag instead of erase when mousedown on starting point
+        {
+            if(node.EndPoint) 
+            {
+                endnodeCount--;
+                node.resetToNormalNodeForEraser();
+                addEndnodeButtonState = Enabled; //allow adding endnode (disabled at max 3)
+                StateHasChanged();
+            }
+            else if(node.isWall)
+            {
+                node.removeWall();
+                StateHasChanged();
+            }
+            
+           return "EndnodeAndWallEraser";  //trigger one erase and return
+        } 
+        //Proceed to transferSpecialNode if not returned
+
+        //Check if node clicked is InitialPoint or End Point
+        if (node.InitialStartPoint == true) 
+        {
+            //Remove active status of buttons
+            if(paintWallButtonState == ActiveClickable) paintWallButtonState = Enabled;
+            if(EndnodeAndWallEraserButtonState == ActiveClickable) EndnodeAndWallEraserButtonState = Enabled;
+
+            Console.WriteLine("Clicked Node is special");
+            nodeMouseMoveChangeType = "TransferSpecialNode";
+            await InvokeAsync(StateHasChanged);
+            return nodeMouseMoveChangeType;
+
+        }
+        else if (node.EndPoint == true)
+        {
+            //Remove active status of buttons
+            if(paintWallButtonState == ActiveClickable) paintWallButtonState = Enabled;
+            if(EndnodeAndWallEraserButtonState == ActiveClickable) EndnodeAndWallEraserButtonState = Enabled;
+
+            Console.WriteLine("Clicked Node is special");
+            nodeMouseMoveChangeType = "TransferSpecialNode";
+            await InvokeAsync(StateHasChanged);
+            return nodeMouseMoveChangeType;
+        }
+        else
+        {
+            Console.WriteLine("Clicked Node is NOT special");
+            return nodeMouseMoveChangeType;
+        }
+    }
+
+    [JSInvokable]
+    public async void MouseMoveOnNodes(int xMousePosition, int yMousePosition, string nodeChangeType)
+    {   
+        Node? pointingAtThisNode = getNodeWithCoordinates(xMousePosition, yMousePosition); //returns null if out of bounds
+        if(pointingAtThisNode == null) return;
+
+        if(nodeChangeType == "PaintWall")
+        {
+            pointingAtThisNode.setAsWall();
+            //cleartWallButtonState = Enabled;
+            StateHasChanged();
+            return;
+        }else if(nodeChangeType == "EndnodeAndWallEraser")
+        {
+            if(pointingAtThisNode.EndPoint && endnodeCount != 1) 
+            {
+                endnodeCount--;
+                pointingAtThisNode.resetToNormalNodeForEraser();
+
+                addEndnodeButtonState = Enabled; //allow adding endnode (disabled at max 3)
+                StateHasChanged();
+            }
+            else if(pointingAtThisNode.isWall)
+            {
+                pointingAtThisNode.removeWall();
+                StateHasChanged();
+            }
+            return;
+        }
+
+        if (nodeChangeType == "TransferSpecialNode"
+        && tempNodeForMouseEventInterlop != getNodeWithCoordinates(xMousePosition, yMousePosition)
+        && pointingAtThisNode.InitialStartPoint != true //Avoid overiding types that are already in the node
+        && pointingAtThisNode.EndPoint != true)
+        {
+
+            //swap node type (if MouseDown on Special Node) to another node
+            if (tempNodeForMouseEventInterlop?.InitialStartPoint == true)
+            {
+                tempNodeForMouseEventInterlop.swapNodeFromUserMouseMove(false, true);
+                tempNodeForMouseEventInterlop = pointingAtThisNode; //Assign new in case user still holds to other nodes
+
+                pointingAtThisNode.swapNodeFromUserMouseMove(true, true);
+                StateHasChanged();
+
+            }
+            else if (tempNodeForMouseEventInterlop?.EndPoint == true)
+            {
+                tempNodeForMouseEventInterlop.swapNodeFromUserMouseMove(false, false);
+                tempNodeForMouseEventInterlop = pointingAtThisNode;
+                pointingAtThisNode.swapNodeFromUserMouseMove(true, false);
+    
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("NODE Start/End type ERROR!");
+            }
+            await runSearchAlgorithm(false);
+        }
+        else if(nodeChangeType == "ToWall")
+        {
+
+        }
+
+    } 
+}
+
+<header class="notDraggable">
+
+
+
+<div class="button-wrapper"@if(){}
+ @onpointerleave="@(() => hideButtonSelection("Maze"))"
+ @onmouseenter="@(() => showButtonSelection("Maze"))">
+    <button class="@generateMazeButtonState"> Maze Generation Algorithms </button>
+
+    @if(showMazeSelection)
+    {
+        <div class="selection-container">
+            <button class="selection-button" @onclick="@(() => runMazeGenerationAlgorithms("recursiveDivision"))">Recursive Division</button>
+            <button class="selection-button" @onclick="@(() => runMazeGenerationAlgorithms("iterativeBacktracker"))">Iterative Backtacker</button>
+            <button class="selection-button" @onclick="@(() => runMazeGenerationAlgorithms("kruskalsAlgorithm"))">Kruskal's</button>
+         </div>
+    }
+    
+</div>
+<div
+@onpointerleave="@(() => hideButtonSelection("SearchAlgorithm"))"
+@onmouseenter="@(() => showButtonSelection("SearchAlgorithm"))">
+     
+
+    <button class="@pathFindingAlgorithmsButtonState">   PathFinding Algorithms   </button>
+
+    @if(showSearchAlgorithmSelection)
+    {
+        <div class ="selection-container">
+        <button class="selection-button" @onclick="@(() => modifyActiveSearchAlgo("Breadth-First"))">Breath-First</button>
+        <button class="selection-button" @onclick="@(() => modifyActiveSearchAlgo("Recursive Depth-First"))">Recursive Depth-First</button>
+        <button class="selection-button" @onclick="@(() => modifyActiveSearchAlgo("A* Search"))">A* Search</button>
+        <button class="selection-button" @onclick="@(() => modifyActiveSearchAlgo("Greedy Best-First"))">Greedy Best-First</button>
+        <button class="selection-button" @onclick="@(() => modifyActiveSearchAlgo("Bidirectional"))">Bidirectional</button>
+        </div>
+    }
+
+</div>
+<button class="@runSearchAlgorithmButtonState" @onclick="@(() => runSearchAlgorithm(true))"> Run @currentlyActiveSearchAlgorithm Search </button>
+<button class="@pauseButtonState" @onclick="pauseSearchAlgorithm">Pause</button>
+<button class="@resetButtonState" @onclick="@resetSearchAlgorithm">Reset</button>
+<button class="@paintWallButtonState" @onclick="@togglePaintWall"><img class="header-icon-image" src="images/Header-Icon-Wall.png"/>Paint Wall</button>
+<button class="@cleartWallButtonState" @onclick="@removeWalls">Clear Walls</button>
+<button class="@addEndnodeButtonState" @onclick="@(() => addEndnode())"><img class="header-icon-image" src="images/Header-Icon-Endnode.png" style="width: 20px; height:25px; margin-top: 0px;"/>Add Endnode</button>
+<button class="@EndnodeAndWallEraserButtonState" @onclick="@toggleEndnodeAndWallEraser"> <img class="header-icon-image" src="images/Header-Icon-EndnodeWallEraser.png" style="width: 255x; margin-top: 3px;"/>Endnode/Wall Eraser</button>
+<button class="@speedButtonState" @onclick="@changePathfindingSpeed" >Speed: @pathfindingSpeedMode</button>
+</header>
+
+<div class="grid-container notDraggableAndClickable">
+    <div class="legends-container">
+        <img src="images/start.png" class="nodeicon legend-image"> <img/>
+        <p class="legend-text">Start</p>
+
+        <img src="images/end.png" class="nodeicon legend-image"> <img/>
+        <p class="legend-text">Destination/s</p>
+
+    @*
+        <div class="nodeDefaultState legend-image"></div>
+        <p class="legend-text">Unvisited</p>
+    *@
+        
+        <div class="nodeVisited1 legend-image"></div>
+        <p class="legend-text">Visited</p>
+        
+
+        <div class="nodeBestPath1 legend-image"></div>
+        <p class="legend-text">Best Path</p>
+
+        <div class="nodeDeadEnd legend-image"></div>
+        <p class="legend-text">Dead End</p>
+
+        <div class="nodeWall legend-image"></div>
+        <p class="legend-text">Wall</p>
+    </div>
+    
+    @if(razorIntializeDone == true){
+        @for (int n = 0; n < grid!.GetLength(0); n++)
+        {
+            @for (int i = 0; i < grid.GetLength(1); i++)
+            {
+                <div class="node @grid[n,i].State" 
+                    style="
+                    left: @(grid[n,i].RowPosition)px; 
+                    top: @(grid[n,i].ColPosition)px; 
+                    height: @(nodeSize)px; 
+                    width: @(nodeSize)px;
+                    transition: background-color @(transitionDelay)s">
+
+                    @if(grid[n,i].InitialStartPoint == true)
+                    {
+                    <img src="images/start.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
+                    }else if(grid[n,i].EndPoint == true)
+                    {
+                    <img src="images/end.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
+                    }
+                </div>
+
+            }
+
+        }
+
+        
+    }
+    @if(manualEnabled){
+        <div class = "modal-container" >
+            <div class = "modal-content">
+                <button class="modal-button-exit" @onclick="@toggleModal">
+                    <img class="modal-button-exit-image" src="images/Modal-Exit.png"/>
+                </button>
+                <button class="modal-button-nextPage" @onclick="@(() => @changePageForModal(false))">
+                    @if(manualCurrentPageNumber > 0) //disable on first page
+                    {
+                        <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px;" />
+                    }
+                </button>
+                
+                <div class = "modal-body">
+                @switch(manualCurrentPageNumber)
+                {
+                    case 0:
+                        <h1 class="modal-h1"style="color:#A3A300">Welcome!</h1>
+                        <h1 class="modal-h2" style="color:green">To My Pathfinding Visualizer Project</h1>
+                        <p> This Pathfinding Visualizer is an interactive app built using Blazor and C#. It visualizes the process of different search algorithms to show how each of it behaves differently.
+                        Generate or create your own maze, select an algorithm, interact and watch the algorithm search and get the path to the destination! </p>
+                        <br>
+                        
+                        <img class = "modal-body-image1" src="images/Modal-PathFind-Demo.png"/>
+                    break;
+                
+                    case 1:
+                        <h1 class="modal-h1"style="color:#A3A300">Manual</h1>
+                        <h1 class="modal-h2" style="color:green">Setup</h1>
+                        <h5 class="modal-subtitle"> Walls</h5>
+                        <p> <strong>Set walls</strong> in the grid in order to make the pathfinding process more complex. This can be done in <strong>2 ways</strong>:</p>
+                        <p></p>
+                        <p>Option 1: Use <strong>Maze Generation Algorithms</strong> (Recursive, Iterative, or Kruskal's)</p>
+                        <img class = "modal-body-image2" src="images/WallGenerated.png"/>
+                        <img class = "modal-body-image3" style="height: 150px" src="images/Modal-MazeGenerationPoint.png"/>
+                        <p></p>
+                        <p>Option 2: Build your own wall using the <strong>"Paint Wall"</strong> button</p>
+                        <img class = "modal-body-image2" src="images/Modal-WallDrawn.png"/>
+                        <img class = "modal-body-image3" src="images/Modal-PaintWall.png"/>
+                        <p></p>
+                        <p>To remove walls, use <strong>"Endnode/Walls Eraser"</strong> button to allow you to remove walls by burshing past them in the grid while <strong>holding down left-click</strong>.
+                            While <strong>"Clear Walls"</strong> button will remove all walls regardles of option used to create them.</p>
+                    break;
+                
+                    case 2:
+                        <h1 class="modal-h1"style="color:#A3A300">Manual</h1>
+                        <h1 class="modal-h2" style="color:green">Setup</h1>
+                        <h5 class="modal-subtitle"> Move Special Nodes</h5>
+                        <p> <strong>Drag and drop</strong> special nodes in any part of the grid.</p>
+                        <img class="modal-body-image3" src="images/Modal-SpecialNodes.png"/>
+                        <p></p>
+                        <h5 class="modal-subtitle"> End Nodes</h5>
+                        <p> These are the nodes that the algorithm will be searching for. There can only be up to <strong>3 End nodes</strong> at any time. Using <strong>"Add Endnode"</strong> button will add End nodes,
+                        while using <strong>"Endnode/Wall Eraser"</strong> button will allow you to remove End nodes.</p>
+                        <img class="modal-body-image3" src="images/Modal-MultipleEndnodes.png"/>
+                        <p></p>
+                        <h5 class="modal-subtitle"> Select PathFinding Algorithm Then Run!</h5>
+                        <p> Select any of the avaialable algorithms in <strong>"PathFinding Algorithms"</strong> selection then finally press the <strong>"Run"</strong> button beside it.</p>
+                        <img class="modal-body-image2" src="images/Modal-ChooseAndPlaySearch.png"/>
+                    break;
+
+                    case 3:
+                        <h1 class="modal-h1"style="color:#A3A300">Manual</h1>
+                        <h1 class="modal-h2" style="color:green">Interacting with The Algorithm</h1>
+                        <h5 class="modal-subtitle"> Buttons</h5>
+                        <p> Buttons has 3 states: <strong>disabled</strong>, <strong>clickable</strong>, and <strong>active</strong>. 
+                        Buttons states are reflected on the appearance which can be seen with he marked image below:</p>
+                        <img class="modal-body-image3" src="images/Modal-ButtonStatesMarked.png"/>
+                        <p></p>
+                        <h5 class="modal-subtitle"> Pause and Reset</h5>
+                        <p>You can <strong>pause</strong> at any given time during the pathfinding algorithm process. Doing so will halt searching for new nodes but keep currently visited nodes.
+                        To unpause, just press "run" button. While <strong>reset</strong> will allow you to clear best path and visited nodes.
+                        </p>
+                        <p></p>
+                        <h5 class="modal-subtitle">Special Nodes</h5>
+                        <p> Remember that you can interact with <strong>special nodes</strong> before ,during, and after pathfinding (except during <strong>maze generation</strong>).
+                        If nodes have been visited or a path is already displayed, the algorithm will <strong>recalculate in real time</strong> as you move objects.</p>
+                        <img class="modal-body-image2" src="images/Modal-MoveSpecialNodesInteraction.png"/>
+                    break;
+
+                    
+                    case 4:
+                    
+                        <h1 class="modal-h1"style="color:#A3A300">Manual</h1>
+                        //<br>
+                        <h1 class="modal-h2" style="color:green">Algorithm List</h1>
+                        <br>
+                        <h5 class="modal-subtitle"> PATHFINDNING</h5>
+                        <p><strong> Breadth-First Search (BFS)</strong> - Explores the grid layer by layer, expanding equally in all directions like a ripple in water. <strong>Guarantees the shortest path</strong> possible.</p>
+                        <p><strong> Recursive Depth-First Search (DFS)</strong> - Searches as deep as possible in one direction before back-tracking. This one has a feature that <strong>marks dead ends </strong> in the grid. Does not gurantee shortest path</p>
+                        <p><strong> A* Search</strong> - Performs a smart heuristic search where it evaluates each of the nodes to be explored based on distance both to end node and start node. <strong>Guarantees the shortest path</strong> possible but requires the end node location to be known. </p>
+                        <p><strong> Greedy Best-First Search</strong> - A heuristic search but only prioritizes nodes that are closer to an end node. Does not gurantee shortest path but requires the end node location to be known</p>
+                        <p><strong> Bidirectional Search</strong> - Does 2 simultaneous search from start node and endnode. Selecting this <strong>limits end nodes to 1</strong>. But it <strong>guarantees the shortest path</strong> possible.</p>
+                        <br>
+                        <h5 class="modal-subtitle"> MAZE GENERATION</h5>
+                        <p><strong> Recursive Division</strong> - Divides the grid into two, then proceeds to divide those new spaces into two also. This continues until there is no more valid division to be made.</p>
+                        <p><strong> Iterative Backtracker</strong> - Carves out path in a winding, snake like manner. It moves in random directions until it hits an dead end, then backtracks until the entire grid is explored</p>
+                        <p><strong>  Kruskal's</strong> - Closes the grid with walls, leaving 1 x 1 openings. It then connects the openings until all are traversable.</p>
+                    break;
+                }
+                </div>
+                <button class="modal-button-nextPage" @onclick="@(() => changePageForModal(true))">
+                    @if(manualCurrentPageNumber < 4) //disable on last page
+                    {
+                        <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px;  transform: scaleX(-1);" /> @*//transform to flip*@
+                    }
+                </button>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+
+
+@code {
+
+    public async Task runSearchAlgorithm(bool isUsingButton)
+    {
+        if(runSearchAlgorithmButtonState == Disabled)return;
+
+        if(isUsingButton //"run" method used by button click (with ONLY AFTER PATHFIND IS DONE and BEST PATH SHOWN WITHOUT PAUSE) 
+        && pathfindingAlgoFinished //different behavior when algo finished and best path is shown
+        && !isAlgorithmalreadyPaused)//ignore if paused
+        { 
+            transitionDelay = 0; //remove transition for reset
+            await resetSearchAlgorithm();
+            updateButtonStatesWhenClicked(ButtonType.RunSearchAlgorithm);
+            isAlgorithmalreadyPaused = false; //enable pause again
+            isAlgorithmalreadyInProgress = true; //allow algo to run if moving special nodes
+            pathfindingAlgoFinished = false; //disable showing best path with 0 delay
+            if(pathfindingAlgorithmSpeed != 3) transitionDelay = 0.5; //Speed mode instant has 0 transition
+            pathfindingAlgorithm!.removePause();
+            await pathfindingAlgorithm!.runSearch(currentlyActiveSearchAlgorithm); //returns false if done
+            //updateButtonStatesWhenTaskDone(ButtonType.RunSearchAlgorithm);
+        }
+        else if(isUsingButton //"run" method used by button click (for paused pathfind and grid is clear of visited nodes)
+        && (!isAlgorithmalreadyInProgress || isAlgorithmalreadyPaused)) //Algo not yet "ran" OR is algo paused (play again and skip if paused)
+        {
+            updateButtonStatesWhenClicked(ButtonType.RunSearchAlgorithm);
+            isAlgorithmalreadyPaused = false; //enable pause again
+            isAlgorithmalreadyInProgress = true; //allow algo to run if moving special nodes
+            pathfindingAlgoFinished = false; //disable showing best path with 0 delay
+            if(pathfindingAlgorithmSpeed != 3) transitionDelay = 0.5; //Speed mode instant has 0 transition
+            else{transitionDelay = 0;}
+            pathfindingAlgorithm!.removePause();
+            await pathfindingAlgorithm!.runSearch(currentlyActiveSearchAlgorithm); //returns false if done
+            //updateButtonStatesWhenTaskDone(ButtonType.RunSearchAlgorithm);
+
+
+        }
+        //"run" method used by "MoveSpecialElement" method when moving special nodes
+        else if(!isUsingButton && isAlgorithmalreadyInProgress) //avoid starting algo when user moved mouse and if user did not clicked start
+        {
+
+            //dont pause if algorithm completed, allowing it always show best path
+            if(!pathfindingAlgoFinished){
+                await pauseSearchAlgorithm(); //pause algo process when user moved special node mid process
+            }
+
+            transitionDelay = 0;
+            await pathfindingAlgorithm!.runSearch(currentlyActiveSearchAlgorithm);
+
+        }
+
+           updateButtonStatesWhenTaskDone(ButtonType.RunSearchAlgorithm);
+
+    }
+    public async Task pauseSearchAlgorithm()
+    {
+        if(pauseButtonState != Enabled)return;
+
+        updateButtonStatesWhenClicked(ButtonType.PauseSearch);
+        if(!isAlgorithmalreadyPaused) //Allows pausing when user moved special node mid algo process to work properly (also avoid redundant pause with button)
+        {
+
+            pathfindingAlgorithm!.pauseAlgorithmAndSetDelayZero();
+            isAlgorithmalreadyPaused = true;
+            transitionDelay = 0; //remove lag
+            //isAlgorithmalreadyInProgress = false; will completely stop algo when user moved special node mid process
+        }
+
+
+
+    }
+    public async Task resetSearchAlgorithm()
+    {    
+        transitionDelay = 0;
+        if(resetButtonState != Enabled)return;
+        pathfindingAlgorithm!.pauseAlgorithmAndSetDelayZero();
+        
+        //NOTE: causing lag in change color (FIXED but updating DOM by sets by distance instead of individualy)
+        await pathfindingAlgorithm!.resetPathFindAlgorithm(true);
+
+        //Prevent algorithm from running moving special elements
+        isAlgorithmalreadyInProgress = false;
+
+        await Task.Delay(50); //delay for transitionDelay = 0 to apply
+        if(pathfindingAlgorithmSpeed != 3) transitionDelay = 0.5;
+        updateButtonStatesWhenClicked(ButtonType.ResetSearch);
+    }
+    void algorithmCompletesWithoutUserInterupting(){ //called when algorithm completed and showed best path
+
+        //when user move special nodes it usually pauses if process incomplete
+        //This stop pausing if the algo process completes -> allowing it to show best path when moving speical nodes
+        pathfindingAlgoFinished = true; //enable showing best path with 0 delay when moving special nodes
+        updateButtonStatesWhenTaskDone(ButtonType.RunSearchAlgorithm);
+
+    }
+
+    public async Task runMazeGenerationAlgorithms(string algorithmToRun)
+    {
+        if(generateMazeButtonState != Enabled)return;
+         
+        await resetSearchAlgorithm();
+        updateButtonStatesWhenClicked(ButtonType.GenerateMaze);
+        StateHasChanged();
+        transitionDelay = 0.5; //redundant but fixes transition issues (leaving resetSearchAlgorithm() at 0 transition delay)
+        await generateMaze!.run(algorithmToRun);
+        showMazeSelection = false;
+        updateButtonStatesWhenTaskDone(ButtonType.GenerateMaze);
+
+        if(pathfindingAlgorithmSpeed == 3) transitionDelay = 0; //Bring back to 0 if speed is intant
+    }
+
+    public async Task modifyActiveSearchAlgo(string algorithmName){
+
+        currentlyActiveSearchAlgorithm = algorithmName;
+        showSearchAlgorithmSelection = false;
+
+        if(generateMazeButtonState != Active){ //dont reset if maze is generating (already resets pathfinding algorithm search in grid)
+        await resetSearchAlgorithm();
+        }
+
+        if(currentlyActiveSearchAlgorithm == "Bidirectional") //Only limited to 1 endnode
+        {
+            addEndnodeButtonState = Disabled; //Also updated hardcoded button state interactions in switch
+
+            if(endnodeCount != 1) //if endnode is more than 1)
+            {
+                pathfindingAlgorithm!.removeExcessEndnodesForBidirectional(); // will leave 1 endnode
+                endnodeCount = 1; 
+            }
+        }else if(endnodeCount < 3) addEndnodeButtonState = Enabled; //Reanable in case coming from "Bidirectional" Search
+    }
+
+    public void showButtonSelection(string selectionOf){
+
+        if(selectionOf == "Maze"){
+            if(generateMazeButtonState != Enabled) return; //(disabled when generating maze in progress)
+            showMazeSelection = true; //toggle 
+
+        }else if(selectionOf == "SearchAlgorithm"){
+            if(generateMazeButtonState != Enabled) return; //(disabled when generating maze in progress)
+            showSearchAlgorithmSelection = true;
+        }
+
+    }
+
+    public void hideButtonSelection(string selectionOf){
+
+        if(selectionOf == "Maze"){
+            showMazeSelection = false; //toggle
+        }else if(selectionOf == "SearchAlgorithm"){
+            showSearchAlgorithmSelection = false;
+        }
+
+    }
+
+    public void updateButtonStatesWhenClicked(ButtonType clickedButtonType)
+    {
+        switch(clickedButtonType)
+        {
+            case ButtonType.GenerateMaze:
+            generateMazeButtonState = Active;
+            pathFindingAlgorithmsButtonState = Disabled;
+            runSearchAlgorithmButtonState = Disabled;
+            paintWallButtonState = Disabled;
+            addEndnodeButtonState = Disabled;
+            cleartWallButtonState = Disabled;
+            EndnodeAndWallEraserButtonState = Disabled;
+            break;
+
+            case ButtonType.RunSearchAlgorithm:
+            runSearchAlgorithmButtonState = Active;
+            pauseButtonState = Enabled;
+            resetButtonState = Enabled;
+            paintWallButtonState = Enabled;
+            EndnodeAndWallEraserButtonState = Enabled;
+            generateMazeButtonState = Disabled;
+            cleartWallButtonState = Disabled;
+            addEndnodeButtonState = Disabled;
+            break;
+
+            case ButtonType.PauseSearch:
+            pauseButtonState = Active;
+            resetButtonState = Enabled;
+            runSearchAlgorithmButtonState = Enabled;
+            generateMazeButtonState = Enabled;
+            if(endnodeCount < 3 && currentlyActiveSearchAlgorithm != "Bidirectional")  addEndnodeButtonState = Enabled;
+            paintWallButtonState = Enabled;
+            EndnodeAndWallEraserButtonState = Enabled;
+            break;
+
+            case ButtonType.ResetSearch:
+            runSearchAlgorithmButtonState = Enabled;
+            generateMazeButtonState = Enabled;
+            if(endnodeCount < 3 && currentlyActiveSearchAlgorithm != "Bidirectional")  addEndnodeButtonState = Enabled;
+            paintWallButtonState = Enabled;
+            EndnodeAndWallEraserButtonState = Enabled;
+            resetButtonState = Disabled;
+            pauseButtonState = Disabled;
+            break;
+
+            case ButtonType.PaintWall:
+            paintWallButtonState = ActiveClickable;
+            EndnodeAndWallEraserButtonState = Enabled;
+            break;
+
+            case ButtonType.ClearWalls:
+            //cleartWallButtonState = Disabled;
+            break;
+
+            case ButtonType.EndnodeAndWallEraser:
+            EndnodeAndWallEraserButtonState = ActiveClickable;
+            paintWallButtonState = Enabled;
+            break;
+        }
+    }
+
+    public void updateButtonStatesWhenTaskDone(ButtonType taskFromButtonCompleted)
+    {
+        switch(taskFromButtonCompleted){
+
+            case ButtonType.GenerateMaze:
+            pathFindingAlgorithmsButtonState = Enabled;
+            runSearchAlgorithmButtonState = Enabled;
+            paintWallButtonState = Enabled;
+            generateMazeButtonState = Enabled;
+            cleartWallButtonState = Enabled;
+            if(endnodeCount < 3 && currentlyActiveSearchAlgorithm != "Bidirectional")  addEndnodeButtonState = Enabled;
+            EndnodeAndWallEraserButtonState = Enabled;
+            break;
+
+            case ButtonType.RunSearchAlgorithm: //used in algorithmCompletesWithoutUserInterupting method
+            generateMazeButtonState = Enabled;
+            runSearchAlgorithmButtonState = Enabled;
+            resetButtonState = Enabled;
+            cleartWallButtonState = Enabled;
+            if(pauseButtonState != Active) pauseButtonState = Disabled; //ignore if user dragged special node to endnode and showed best path WHILE PAUSED
+            if(endnodeCount < 3 && currentlyActiveSearchAlgorithm != "Bidirectional")  addEndnodeButtonState = Enabled;
+            break;
+
+            case ButtonType.PaintWall: //tiggered when pressing paintwall button while active
+            paintWallButtonState = Enabled;
+            //cleartWallButtonState = Disabled;
+            break;
+
+            case ButtonType.EndnodeAndWallEraser: //tiggered when pressing EndnodeAndWallEraser button while active
+            EndnodeAndWallEraserButtonState = Enabled;
+            break;
+        }
+    }
+
+    public Node? getNodeWithCoordinates(int xPos, int yPos)
+    {
+        int row =  (xPos - (nodeSize / 2)) / nodeSize;
+        int col = (yPos - alotedSpaceForHeader) / nodeSize;
+        
+        if(row >= 0 && col >= 0 && row < grid?.GetLength(0) && col < grid.GetLength(1)) return grid![row, col];//check for out of bounds
+        else return null;
+        
+    }
+
+
+    public async Task togglePaintWall(){
+        if(paintWallButtonState == Enabled) {
+            await pauseSearchAlgorithm(); //Pause Search to avoid goofy interactions
+            updateButtonStatesWhenClicked(ButtonType.PaintWall);
+            transitionDelay = 0.5; //show consistent transition when making walls
+        }
+        else if(paintWallButtonState == ActiveClickable) updateButtonStatesWhenTaskDone(ButtonType.PaintWall);
+    } 
+    public async Task toggleEndnodeAndWallEraser(){
+
+        if(EndnodeAndWallEraserButtonState == Enabled) {
+            await pauseSearchAlgorithm(); //Pause Search to avoid goofy interactions
+            updateButtonStatesWhenClicked(ButtonType.EndnodeAndWallEraser);
+            transitionDelay = 0.5; //show consistent transition when making walls
+        }
+        else if(EndnodeAndWallEraserButtonState == ActiveClickable) updateButtonStatesWhenTaskDone(ButtonType.EndnodeAndWallEraser);
+    } 
+
+    public async Task removeWalls()
+    {
+        transitionDelay = 0;
+        await runMazeGenerationAlgorithms("clearWalls");
+        updateButtonStatesWhenClicked(ButtonType.ClearWalls);
+        StateHasChanged();
+        if(pathfindingAlgorithmSpeed != 3) transitionDelay = 0.5;
+    }
+
+    public void addEndnode(int rowIndex = 0, int colIndex = 0)
+    {
+        Node? nodeFromCoordinates;
+        bool endnodeAdded = false;
+
+        if(rowIndex + colIndex == 0)//if no corrdinates given add to default point (middle)
+        {
+
+            for(int colToAddEndnode = 10; !endnodeAdded && colToAddEndnode < 25; colToAddEndnode++) //continue until there is a new endnode added or past row limit
+            {  
+                if(colToAddEndnode < 0 && colToAddEndnode >= grid?.GetLength(1)) continue;//check for out of bounds
+
+                nodeFromCoordinates = grid?[41, colToAddEndnode];
+
+                if(nodeFromCoordinates?.EndPoint == false)
+                {
+                    nodeFromCoordinates.setAsNewEndPoint();
+                    endnodeAdded = true;
+                    endnodeCount++;
+                }
+
+                if(endnodeCount >= 3)
+                {
+                    addEndnodeButtonState = Disabled;
+                    return;
+                }
+            }
+
+        }else 
+        {
+            if(rowIndex < 0 && colIndex >= grid?.GetLength(0)) return;//check for out of bounds
+
+            nodeFromCoordinates = grid?[rowIndex, colIndex];
+            nodeFromCoordinates?.setAsNewEndPoint();
+            endnodeCount++;
+        }
+        
+
+    }
+    
+    private void changePageForModal(bool nextPage){
+        
+        if(nextPage)//page to the next
+        {
+            if(manualCurrentPageNumber < 4)manualCurrentPageNumber++;
+        }
+        else//page to the back
+        {
+            if(manualCurrentPageNumber > 0)manualCurrentPageNumber--;
+        }
+            
+
+    }
+
+    private void toggleModal()
+    {
+        manualEnabled = !manualEnabled;
+    }
+
+    private void changePathfindingSpeed()
+    {
+        pathfindingAlgorithmSpeed++;
+
+        if(pathfindingAlgorithmSpeed > 3) pathfindingAlgorithmSpeed = 0;
+
+        switch(pathfindingAlgorithmSpeed)
+        {
+            case 0:
+            pathfindingAlgorithm!.modifyPathfindingDelay(230);
+            pathfindingSpeedMode = "Slow";
+            break;
+
+            case 1:
+            pathfindingAlgorithm!.modifyPathfindingDelay(150);
+            pathfindingSpeedMode = "Normal";
+            break;
+
+            case 2:
+            pathfindingAlgorithm!.modifyPathfindingDelay(100);
+            pathfindingSpeedMode = "Fast";
+            break;
+
+            case 3:
+            pathfindingAlgorithm!.modifyPathfindingDelay(0);
+            pathfindingSpeedMode = "Instant";
+            break;
+        }
+
+    }
+    public void updateDOMState()
+    {
+        StateHasChanged();
+    }
+    
+}
