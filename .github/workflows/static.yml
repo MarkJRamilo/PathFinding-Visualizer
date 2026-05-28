@@ -6,7 +6,7 @@ on:
   push:
     branches: ["main"]
     paths:
-    - "PathFinding_Visualizer/PathFind_Visualizer_Published/wwwroot/**"
+    - 'PathFinding_Visualizer/PathFind_Visualizer_Published/wwwroot/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
