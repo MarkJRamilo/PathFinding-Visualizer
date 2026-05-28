@@ -61,17 +61,17 @@
         EndnodeAndWallEraser
     }
 
-    //ButtonState used to define CSS class (Functional)
-    string generateMazeButtonState = Enabled;
-    string pathFindingAlgorithmsButtonState = Enabled;
-    string runSearchAlgorithmButtonState = Enabled;
-    string paintWallButtonState = Enabled;
-    string cleartWallButtonState = Enabled;
+    //ButtonState used to define CSS class (Functional) -Enable after exiting modal (manual)
+    string generateMazeButtonState = Disabled;
+    string pathFindingAlgorithmsButtonState = Disabled;
+    string runSearchAlgorithmButtonState = Disabled;
+    string paintWallButtonState = Disabled;
+    string cleartWallButtonState = Disabled;
     string pauseButtonState = Disabled;
     string resetButtonState = Disabled;
-    string addEndnodeButtonState = Enabled;
-    string EndnodeAndWallEraserButtonState = Enabled;
-    string speedButtonState = Enabled;
+    string addEndnodeButtonState = Disabled;
+    string EndnodeAndWallEraserButtonState = Disabled;
+    string speedButtonState = Disabled;
 
     //For Manual Interactions
     bool manualEnabled = true;
@@ -280,7 +280,7 @@
 
 
 
-<div class="button-wrapper"@if(){}
+<div class="button-wrapper"
  @onpointerleave="@(() => hideButtonSelection("Maze"))"
  @onmouseenter="@(() => showButtonSelection("Maze"))">
     <button class="@generateMazeButtonState"> Maze Generation Algorithms </button>
@@ -319,79 +319,23 @@
 <button class="@resetButtonState" @onclick="@resetSearchAlgorithm">Reset</button>
 <button class="@paintWallButtonState" @onclick="@togglePaintWall"><img class="header-icon-image" src="images/Header-Icon-Wall.png"/>Paint Wall</button>
 <button class="@cleartWallButtonState" @onclick="@removeWalls">Clear Walls</button>
-<button class="@addEndnodeButtonState" @onclick="@(() => addEndnode())"><img class="header-icon-image" src="images/Header-Icon-Endnode.png" style="width: 20px; height:25px; margin-top: 0px;"/>Add Endnode</button>
-<button class="@EndnodeAndWallEraserButtonState" @onclick="@toggleEndnodeAndWallEraser"> <img class="header-icon-image" src="images/Header-Icon-EndnodeWallEraser.png" style="width: 255x; margin-top: 3px;"/>Endnode/Wall Eraser</button>
+<button class="@addEndnodeButtonState" @onclick="@(() => addEndnode())"><img class="header-icon-image" src="images/Header-Icon-Endnode.png" style="width:1vw; aspect-ratio: 4/5; margin-top: 0px;"/>Add Endnode</button>
+<button class="@EndnodeAndWallEraserButtonState" @onclick="@toggleEndnodeAndWallEraser"> <img class="header-icon-image" src="images/Header-Icon-EndnodeWallEraser.png" style="margin-top: 3px;"/>Endnode/Wall Eraser</button>
 <button class="@speedButtonState" @onclick="@changePathfindingSpeed" >Speed: @pathfindingSpeedMode</button>
 </header>
 
-<div class="grid-container notDraggableAndClickable">
-    <div class="legends-container">
-        <img src="images/start.png" class="nodeicon legend-image"> <img/>
-        <p class="legend-text">Start</p>
-
-        <img src="images/end.png" class="nodeicon legend-image"> <img/>
-        <p class="legend-text">Destination/s</p>
-
-    @*
-        <div class="nodeDefaultState legend-image"></div>
-        <p class="legend-text">Unvisited</p>
-    *@
-        
-        <div class="nodeVisited1 legend-image"></div>
-        <p class="legend-text">Visited</p>
-        
-
-        <div class="nodeBestPath1 legend-image"></div>
-        <p class="legend-text">Best Path</p>
-
-        <div class="nodeDeadEnd legend-image"></div>
-        <p class="legend-text">Dead End</p>
-
-        <div class="nodeWall legend-image"></div>
-        <p class="legend-text">Wall</p>
-    </div>
-    
-    @if(razorIntializeDone == true){
-        @for (int n = 0; n < grid!.GetLength(0); n++)
-        {
-            @for (int i = 0; i < grid.GetLength(1); i++)
-            {
-                <div class="node @grid[n,i].State" 
-                    style="
-                    left: @(grid[n,i].RowPosition)px; 
-                    top: @(grid[n,i].ColPosition)px; 
-                    height: @(nodeSize)px; 
-                    width: @(nodeSize)px;
-                    transition: background-color @(transitionDelay)s">
-
-                    @if(grid[n,i].InitialStartPoint == true)
-                    {
-                    <img src="images/start.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
-                    }else if(grid[n,i].EndPoint == true)
-                    {
-                    <img src="images/end.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
-                    }
-                </div>
-
-            }
-
-        }
-
-        
-    }
     @if(manualEnabled){
-        <div class = "modal-container" >
-            <div class = "modal-content">
-                <button class="modal-button-exit" @onclick="@toggleModal">
+        <dialog class = "modal-container" >
+            <button class="modal-button-exit" @onclick="@toggleModal">
                     <img class="modal-button-exit-image" src="images/Modal-Exit.png"/>
-                </button>
-                <button class="modal-button-nextPage" @onclick="@(() => @changePageForModal(false))">
-                    @if(manualCurrentPageNumber > 0) //disable on first page
-                    {
-                        <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px;" />
-                    }
-                </button>
-                
+            </button>
+            <button class="modal-button-nextPage" style="left: 12px; "  @onclick="@(() => @changePageForModal(false))">
+                @if(manualCurrentPageNumber > 0) //disable on first page
+                {
+                    <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px; " />
+                }
+            </button>
+            <div class = "modal-content">                
                 <div class = "modal-body">
                 @switch(manualCurrentPageNumber)
                 {
@@ -413,11 +357,11 @@
                         <p></p>
                         <p>Option 1: Use <strong>Maze Generation Algorithms</strong> (Recursive, Iterative, or Kruskal's)</p>
                         <img class = "modal-body-image2" src="images/WallGenerated.png"/>
-                        <img class = "modal-body-image3" style="height: 150px" src="images/Modal-MazeGenerationPoint.png"/>
+                        <img class = "modal-body-image3" style="height: 140px" src="images/Modal-MazeGenerationPoint.png"/>
                         <p></p>
                         <p>Option 2: Build your own wall using the <strong>"Paint Wall"</strong> button</p>
                         <img class = "modal-body-image2" src="images/Modal-WallDrawn.png"/>
-                        <img class = "modal-body-image3" src="images/Modal-PaintWall.png"/>
+                        <img class = "modal-body-image3" src="images/Modal-PaintWall.png" style="height: 105px"/>
                         <p></p>
                         <p>To remove walls, use <strong>"Endnode/Walls Eraser"</strong> button to allow you to remove walls by burshing past them in the grid while <strong>holding down left-click</strong>.
                             While <strong>"Clear Walls"</strong> button will remove all walls regardles of option used to create them.</p>
@@ -480,16 +424,71 @@
                     break;
                 }
                 </div>
-                <button class="modal-button-nextPage" @onclick="@(() => changePageForModal(true))">
-                    @if(manualCurrentPageNumber < 4) //disable on last page
-                    {
-                        <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px;  transform: scaleX(-1);" /> @*//transform to flip*@
-                    }
-                </button>
             </div>
-        </div>
+            <button class="modal-button-nextPage" style="right: 12px;" @onclick="@(() => changePageForModal(true))">
+                @if(manualCurrentPageNumber < 4) //disable on last page
+                {
+                    <img src="images/Modal-Arrow.png"  style="height: 40px; width: 40px;  transform: scaleX(-1);" /> @*//transform to flip*@
+                }
+            </button>
+        </dialog>
     }
 
+<div class="notDraggableAndClickable">
+    <div class="legends-container">
+        <img src="images/start.png" class="nodeicon legend-image"> <img/>
+        <p class="legend-text">Start</p>
+
+        <img src="images/end.png" class="nodeicon legend-image"> <img/>
+        <p class="legend-text">Destination/s</p>
+
+    @*
+        <div class="nodeDefaultState legend-image"></div>
+        <p class="legend-text">Unvisited</p>
+    *@
+        
+        <div class="nodeVisited1 legend-image"></div>
+        <p class="legend-text">Visited</p>
+        
+
+        <div class="nodeBestPath1 legend-image"></div>
+        <p class="legend-text">Best Path</p>
+
+        <div class="nodeDeadEnd legend-image"></div>
+        <p class="legend-text">Dead End</p>
+
+        <div class="nodeWall legend-image"></div>
+        <p class="legend-text">Wall</p>
+    </div>
+    
+    @if(razorIntializeDone == true){
+        @for (int n = 0; n < grid!.GetLength(0); n++)
+        {
+            @for (int i = 0; i < grid.GetLength(1); i++)
+            {
+                <div class="node @grid[n,i].State" 
+                    style="
+                    left: @(grid[n,i].RowPosition)px; 
+                    top: @(grid[n,i].ColPosition)px; 
+                    height: @(nodeSize)px; 
+                    width: @(nodeSize)px;
+                    transition: background-color @(transitionDelay)s">
+
+                    @if(grid[n,i].InitialStartPoint == true)
+                    {
+                    <img src="images/start.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
+                    }else if(grid[n,i].EndPoint == true)
+                    {
+                    <img src="images/end.png" class="nodeicon" style=" height: @(nodeSize - 1)px; width: @(nodeSize - 1)px"> <img/>
+                    }
+                </div>
+
+            }
+
+        }
+
+        
+    }
 </div>
 
 
@@ -839,6 +838,19 @@
     private void toggleModal()
     {
         manualEnabled = !manualEnabled;
+
+        //open buttons after exiting modal
+
+        generateMazeButtonState = Enabled;
+        pathFindingAlgorithmsButtonState = Enabled;
+        runSearchAlgorithmButtonState = Enabled;
+        paintWallButtonState = Enabled;
+        cleartWallButtonState = Enabled;
+        //pauseButtonState = Disabled;
+        //resetButtonState = Disabled;
+        addEndnodeButtonState = Enabled;
+        EndnodeAndWallEraserButtonState = Enabled;
+        speedButtonState = Enabled;
     }
 
     private void changePathfindingSpeed()
