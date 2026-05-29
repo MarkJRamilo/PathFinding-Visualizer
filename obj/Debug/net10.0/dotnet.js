@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "PathFind Visualizer",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-blIu8rHZTxzGYDFEQUY89O+ymkqL9v3U3wlZgmlR3q8=",
+    "hash": "sha256-0zJiCSsuZVQmeppmthfOWz9SltDmA4MF8Gj6WhRoYcM=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.iay4tjwey2.js"
@@ -1240,8 +1240,8 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "PathFind Visualizer.wasm",
-        "name": "PathFind Visualizer.gkr5p946ta.wasm",
-        "hash": "sha256-0FdbuiLtZARrPnJuUG5MXhKgE9U5IarQ1OS74mC0PKc=",
+        "name": "PathFind Visualizer.97977654u9.wasm",
+        "hash": "sha256-q0ahAxVK2OXrTTWJaChmbmsN//wn85IfKFyl/cdGrVU=",
         "cache": "force-cache"
       }
     ],
@@ -1249,8 +1249,8 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
     "corePdb": [
       {
         "virtualPath": "PathFind Visualizer.pdb",
-        "name": "PathFind Visualizer.pa2qhyn4rn.pdb",
-        "hash": "sha256-34ilaIRDypu4kHUeX8WYVjYjjntcyBpqBgSggj3CCsA=",
+        "name": "PathFind Visualizer.d8qjn6n98a.pdb",
+        "hash": "sha256-jQpWaGjSAyxzZmtaftQRNnOeSAkrWA7W9Z1EtWwb99s=",
         "cache": "force-cache"
       }
     ],
