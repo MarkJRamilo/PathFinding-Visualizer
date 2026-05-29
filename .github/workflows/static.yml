@@ -2,7 +2,7 @@
 #MADE WITH THE HELP OF ARTICLE "Host and deploy ASP.NET Core standalone Blazor WebAssembly with GitHub Pages" FROM MICROSOFT DOCUMENTATION
 name: Deploy static content to Pages
 env:
-  PUBLISH_DIR: PathFinding-Visualizer/bin/Release/net10.0/publish/wwwroot
+  PUBLISH_DIR: bin/Release/net10.0/publish/wwwroot
 on:
   # Runs on pushes targeting the default branch
   push:
@@ -45,6 +45,8 @@ jobs:
         run: dotnet workload restore
       - name: Publish app
         run: dotnet publish -c Release
+      - name: Add .nojekyll #add empty file to not ignore _framaework
+        run: touch ${{ env.PUBLISH_DIR }}/.nojekyll
       - name: Rewrite base href
         uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec # v1.1.0
         with:
