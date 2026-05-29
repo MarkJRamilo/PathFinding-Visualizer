@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PqmkAg9Fi0E=",
+  "dgSpecHash": "+QuGTQjmaN4=",
   "success": true,
-  "projectFilePath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
+  "projectFilePath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFinding-Visualizer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\asus\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.2\\microsoft.aspnetcore.app.internal.assets.10.0.2.nupkg.sha512",
     "C:\\Users\\asus\\.nuget\\packages\\microsoft.aspnetcore.authorization\\10.0.2\\microsoft.aspnetcore.authorization.10.0.2.nupkg.sha512",

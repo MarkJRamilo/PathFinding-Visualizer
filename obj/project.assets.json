@@ -2142,9 +2142,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
-      "projectName": "PathFind Visualizer",
-      "projectPath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
+      "projectUniqueName": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFinding-Visualizer.csproj",
+      "projectName": "PathFinding-Visualizer",
+      "projectPath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFinding-Visualizer.csproj",
       "packagesPath": "C:\\Users\\asus\\.nuget\\packages\\",
       "outputPath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\obj\\",
       "projectStyle": "PackageReference",

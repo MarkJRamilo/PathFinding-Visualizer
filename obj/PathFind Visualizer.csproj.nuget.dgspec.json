@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj": {}
+    "d:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj": {}
   },
   "projects": {
-    "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj": {
+    "d:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
+        "projectUniqueName": "d:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
         "projectName": "PathFind Visualizer",
-        "projectPath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
+        "projectPath": "d:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\PathFind Visualizer.csproj",
         "packagesPath": "C:\\Users\\asus\\.nuget\\packages\\",
-        "outputPath": "D:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\obj\\",
+        "outputPath": "d:\\Programming\\Projects for Portfolio\\FINAL\\PathFind_Visualizer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Programming\\Visual Studio\\Shared\\NuGetPackages"
