@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Private.Uri.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Private.Uri.dll
 FFA3D009-CEBF-475B-96CA-D1B149B64259
 6000001
 6000002

@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\Microsoft.Extensions.DependencyInjection.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\Microsoft.Extensions.DependencyInjection.dll
 EEDF82DA-FC2B-4C5F-BB56-CEFAE0208F47
 6000001
 6000002

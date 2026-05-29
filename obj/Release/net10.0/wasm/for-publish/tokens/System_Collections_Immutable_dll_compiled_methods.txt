@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Collections.Immutable.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Collections.Immutable.dll
 6FA579A7-C9A2-4780-B7E0-5B642A570984
 6000001
 6000003

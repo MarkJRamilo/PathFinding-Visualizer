@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\Microsoft.Extensions.Primitives.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\Microsoft.Extensions.Primitives.dll
 67EC7AD7-9D0A-4039-A6E0-2C33F55A3E0F
 6000001
 600000e

@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Linq.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Linq.dll
 C143E9DD-DE7A-46DB-A1A1-788CB128C0BD
 6000090
 6000091

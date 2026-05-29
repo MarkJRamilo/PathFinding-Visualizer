@@ -1,0 +1,4 @@
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\release\net10.0\publish\wwwroot\index.html
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\release\net10.0\publish\PathFind Visualizer.runtimeconfig.json
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\release\net10.0\publish\dotnet.js
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\release\net10.0\publish\web.config

@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Private.CoreLib.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Private.CoreLib.dll
 82AED19F-0703-4BB7-9EA6-609D20EE444C
 6000002
 6000003

@@ -1,2 +1,2 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Runtime.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Runtime.dll
 95B5A0F0-EEFD-4C1F-B7CC-A91941EA32D7

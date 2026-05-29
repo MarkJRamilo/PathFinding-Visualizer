@@ -1,4 +1,4 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.Runtime.InteropServices.JavaScript.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.Runtime.InteropServices.JavaScript.dll
 61120D75-0111-4BF0-AD57-F987F983509C
 600000b
 600000c

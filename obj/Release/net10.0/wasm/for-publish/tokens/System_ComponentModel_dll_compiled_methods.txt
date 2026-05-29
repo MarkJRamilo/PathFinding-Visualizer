@@ -1,2 +1,2 @@
-D:\Programming\Projects for Portfolio\FINAL\PAthfind_Visualizer\obj\Release\net10.0\wasm\for-publish\aot-in\System.ComponentModel.dll
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\release\net10.0\wasm\for-publish\aot-in\System.ComponentModel.dll
 B72714F0-85E0-4C1D-B1F5-DBAB58925317
