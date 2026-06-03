@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PathFinding-Visualizer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae00985b9d19ab13a60de7fec3265662122d0d24")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de05f026b265760bf15b5547c074de998dbbde6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("PathFinding-Visualizer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PathFinding-Visualizer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

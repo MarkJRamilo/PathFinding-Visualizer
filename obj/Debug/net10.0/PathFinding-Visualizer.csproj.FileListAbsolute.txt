@@ -207,9 +207,6 @@ D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.native.dqv9jrk56t.wasm
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.native.iay4tjwey2.js
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.fopbvgqisw.wasm
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.xkt03hofig.pdb
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.b3e2tk7za9.js
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\blazor.webassembly.66stpp682q.js.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Authorization.1l4onz0xjo.wasm.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Components.nyb7ae3bsc.wasm.gz
@@ -418,9 +415,6 @@ D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.native.dqv9jrk56t.wasm.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.native.iay4tjwey2.js.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.fopbvgqisw.wasm.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.xkt03hofig.pdb.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.b3e2tk7za9.js.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\PathFinding-Visualizer.staticwebassets.runtime.json
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\PathFinding-Visualizer.staticwebassets.endpoints.json
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\PathFinding-Visualizer.dll
@@ -914,8 +908,6 @@ D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\tjg7eusw2t-{0}-iag0ou56lh-iag0ou56lh.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\a5xpbh9jqp-{0}-66stpp682q-66stpp682q.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\h8gtscymaz-{0}-gbgebk0rv2-gbgebk0rv2.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\4sgpfoompe-{0}-a7tch7jjzv-a7tch7jjzv.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\cfvjwitn3z-{0}-a7tch7jjzv-a7tch7jjzv.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\9yrvhpi3ul-{0}-1l4onz0xjo-1l4onz0xjo.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\42l3mydfqr-{0}-nyb7ae3bsc-nyb7ae3bsc.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\e49xnbrve4-{0}-ij454jqrom-ij454jqrom.gz
@@ -1123,9 +1115,6 @@ D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\yqq8ocdplc-{0}-lfu7j35m59-lfu7j35m59.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\vcsu6ftpbw-{0}-dqv9jrk56t-dqv9jrk56t.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\cfjtjentsu-{0}-iay4tjwey2-iay4tjwey2.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\2zrcdp83nl-{0}-fopbvgqisw-fopbvgqisw.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\foxytupivl-{0}-xkt03hofig-xkt03hofig.gz
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\ngpqkw73b2-{0}-b3e2tk7za9-b3e2tk7za9.gz
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\staticwebassets.build.json
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\staticwebassets.build.json.cache
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\staticwebassets.development.json
@@ -1136,4 +1125,15 @@ D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\refint\PathFinding-Visualizer.dll
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\PathFinding-Visualizer.pdb
 D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\ref\PathFinding-Visualizer.dll
-D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\nh23giijvu-{0}-4lz17ynswg-4lz17ynswg.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.ln3h7bnzhd.wasm
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.alo44w4nd8.pdb
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.aem3f2fywg.js
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.ln3h7bnzhd.wasm.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\PathFinding-Visualizer.alo44w4nd8.pdb.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\bin\Debug\net10.0\wwwroot\_framework\dotnet.aem3f2fywg.js.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\4sgpfoompe-{0}-qqhdmka1ba-qqhdmka1ba.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\cfvjwitn3z-{0}-qqhdmka1ba-qqhdmka1ba.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\2zrcdp83nl-{0}-ln3h7bnzhd-ln3h7bnzhd.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\foxytupivl-{0}-alo44w4nd8-alo44w4nd8.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\ngpqkw73b2-{0}-aem3f2fywg-aem3f2fywg.gz
+D:\Programming\Projects for Portfolio\FINAL\PathFind_Visualizer\obj\Debug\net10.0\compressed\nh23giijvu-{0}-eoyri63k2d-eoyri63k2d.gz

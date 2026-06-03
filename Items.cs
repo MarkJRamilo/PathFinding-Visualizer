@@ -65,7 +65,7 @@ public class Node
 
  public void setAsProtected()
     {
-        isProtected = true;
+        isProtected = true; // For DFS to prevent setting best path as dead-end
     }
     public void setAsDeadEnd()
     {
@@ -82,6 +82,8 @@ public class Node
     public void setAsNewEndPoint()
     {    
         EndPoint = true;
+        State="nodeDefaultState"; //To overide if node is wall
+        
     }
     
     public void resetToNormalNodeForEraser()
@@ -97,12 +99,12 @@ public class Node
             if(sourceNodeIsAStartNode) //get node State of other node and assign here
             {
                 InitialStartPoint = true ;
-                State = "nodeDefaultState"; //hide wall
+                State = "nodeDefaultState"; //To overide if node is wall
             }
             else
             {
                 EndPoint = true;
-                State = "nodeDefaultState"; //hide wall
+                State = "nodeDefaultState"; //To overide if node is wall
             } 
 
 
